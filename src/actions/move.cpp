@@ -624,8 +624,6 @@ namespace { // Private helpers for move_unit()
 		if (ambush_string_.empty()) {
 			ambush_string_ = _("Ambushed!");
 		}
-		// Update the display.
-		resources::screen->draw();
 	}
 
 
@@ -1112,7 +1110,6 @@ namespace { // Private helpers for move_unit()
 
 		// Update the screen.
 		resources::screen->redraw_minimap();
-		resources::screen->draw();
 	}
 
 
@@ -1187,11 +1184,6 @@ namespace { // Private helpers for move_unit()
 				message_prefix += " \n";
 				redraw = true;
 			}
-		}
-
-		// Update the screen.
-		if (redraw) {
-			disp.draw();
 		}
 	}
 
