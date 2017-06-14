@@ -1089,7 +1089,6 @@ void play_controller::start_game()
 		init_gui();
 		LOG_NG << "first_time..." << (is_skipping_replay() ? "skipping" : "no skip") << "\n";
 
-		events::raise_draw_event();
 		fire_start();
 		if (is_regular_game_end()) {
 			return;
@@ -1107,7 +1106,6 @@ void play_controller::start_game()
 	else
 	{
 		init_gui();
-		events::raise_draw_event();
 		gamestate().gamedata_.set_phase(game_data::PLAY);
 		gui_->recalculate_minimap();
 	}
@@ -1166,7 +1164,6 @@ void play_controller::play_turn()
 	whiteboard_manager_->on_gamestate_change();
 	gui_->new_turn();
 	gui_->invalidate_game_status();
-	events::raise_draw_event();
 
 	LOG_NG << "turn: " << turn() << "\n";
 
