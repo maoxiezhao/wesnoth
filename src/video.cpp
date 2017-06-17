@@ -135,7 +135,7 @@ SDL_Rect screen_area()
 {
 	sdl::window* w = CVideo::get_singleton().get_window();
 	if(!w) {
-		return {0, 0, frameBuffer->w, frameBuffer->h};
+		return sdl::empty_rect;
 	}
 
 	SDL_Point size = w->get_size();
@@ -217,11 +217,7 @@ void CVideo::init_window()
 	}
 
 	// Initialize window
-#ifdef SW_RENDERING_LEGACY_MODE
-	window.reset(new sdl::window("", x, y, w, h, video_flags, SDL_RENDERER_SOFTWARE | SDL_RENDERER_TARGETTEXTURE));
-#else
 	window.reset(new sdl::window("", x, y, w, h, video_flags, SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE));
-#endif
 
 	std::cerr << "Setting mode to " << w << "x" << h << std::endl;
 
