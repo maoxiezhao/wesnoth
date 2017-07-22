@@ -83,11 +83,6 @@ namespace
 
 /***** ***** ***** ***** ***** DRAWING PRIMITIVES ***** ***** ***** ***** *****/
 
-static void set_renderer_color(SDL_Renderer* renderer, color_t color)
-{
-	SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-}
-
 /**
  * Draws a line on a surface.
  *
@@ -122,7 +117,7 @@ static void draw_line(const int canvas_w,
 	assert(static_cast<int>(y1) < canvas_h);
 	assert(static_cast<int>(y2) < canvas_h);
 
-	set_renderer_color(renderer, color);
+	set_draw_color(renderer, color);
 
 	if(x1 == x2 && y1 == y2) {
 		// Handle single-pixel lines properly
@@ -166,7 +161,7 @@ static void draw_circle(const int canvas_w,
 	if(octants & 0x3c) assert((y_center + radius) < canvas_h);
 	if(octants & 0xc3) assert((y_center - radius) >= 0);
 
-	set_renderer_color(renderer, color);
+	set_draw_color(renderer, color);
 
 	// Algorithm based on
 	// http://de.wikipedia.org/wiki/Rasterung_von_Kreisen#Methode_von_Horn
@@ -233,7 +228,7 @@ static void fill_circle(const int canvas_w,
 	if(octants & 0x3c) assert((y_center + radius) < canvas_h);
 	if(octants & 0xc3) assert((y_center - radius) >= 0);
 
-	set_renderer_color(renderer, color);
+	set_draw_color(renderer, color);
 
 	int d = -static_cast<int>(radius);
 	int x = radius;
@@ -713,7 +708,7 @@ void rectangle_shape::draw(
 
 	// Fill the background, if applicable
 	if(!fill_color.null() && w && h) {
-		set_renderer_color(renderer, fill_color);
+		set_draw_color(renderer, fill_color);
 
 		SDL_Rect area {
 			x +  border_thickness_,
@@ -734,7 +729,7 @@ void rectangle_shape::draw(
 			h - (i * 2)
 		};
 
-		set_renderer_color(renderer, border_color_(variables));
+		set_draw_color(renderer, border_color_(variables));
 
 		SDL_RenderDrawRect(renderer, &dimensions);
 	}
@@ -828,7 +823,7 @@ void round_rectangle_shape::draw(
 
 	// Fill the background, if applicable
 	if(!fill_color.null() && w && h) {
-		set_renderer_color(renderer, fill_color);
+		set_draw_color(renderer, fill_color);
 		static const int count = 3;
 		SDL_Rect area[count] {
 			{x + r,                 y + border_thickness_, w - r                 * 2, r - border_thickness_ + 1},
@@ -848,7 +843,7 @@ void round_rectangle_shape::draw(
 
 	// Draw the border
 	for(int i = 0; i < border_thickness_; ++i) {
-		set_renderer_color(renderer, border_color);
+		set_draw_color(renderer, border_color);
 
 		SDL_RenderDrawLine(renderer, x + r, y + i,     x + w - r, y + i);
 		SDL_RenderDrawLine(renderer, x + r, y + h - i, x + w - r, y + h - i);
