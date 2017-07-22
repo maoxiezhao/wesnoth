@@ -91,6 +91,9 @@ public:
 	typedef std::shared_ptr<const shape> const_shape_ptr;
 
 	canvas();
+	canvas(const canvas&) = default;
+	canvas(canvas&&) = default;
+
 	~canvas();
 
 	/**
@@ -138,8 +141,7 @@ public:
 
 	void set_width(const unsigned width)
 	{
-		w_ = width;
-		set_is_dirty(true);
+		update_size(w_, width);
 	}
 
 	unsigned get_width() const
@@ -149,8 +151,7 @@ public:
 
 	void set_height(const unsigned height)
 	{
-		h_ = height;
-		set_is_dirty(true);
+		update_size(h_, height);
 	}
 
 	unsigned get_height() const
@@ -204,6 +205,9 @@ private:
 	/** The dirty state of the canvas. */
 	bool is_dirty_;
 
+	/** Whether canvas dimensions changed. */
+	bool size_changed_;
+
 	/**
 	 * Parses a config object.
 	 *
@@ -217,6 +221,9 @@ private:
 	void parse_cfg(const config& cfg);
 
 	void clear_shapes(const bool force);
+
+	/** Small helper to handle size variable update logic. */
+	void update_size(unsigned int& value, unsigned int new_value);
 };
 
 } // namespace gui2

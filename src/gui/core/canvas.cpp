@@ -1374,6 +1374,7 @@ canvas::canvas()
 	, variables_()
 	, functions_()
 	, is_dirty_(true)
+	, size_changed_(true)
 {
 }
 
@@ -1398,13 +1399,28 @@ void canvas::draw(const bool force)
 
 	DBG_GUI_D << "Canvas: resetting canvas.\n";
 
-	// Recreate the texture. Will print an error if creation fails.
-	texture_.reset(w_, h_, SDL_TEXTUREACCESS_TARGET);
+	// If cached texture is null or size has changed, throw it out and create a new one.
+	if(!texture_ || size_changed_) {
+		texture_.reset(w_, h_, SDL_TEXTUREACCESS_TARGET);
+
+		size_changed_ = false;
+	}
+
+	// Something went wrong! Bail! The texture ctor will print the error if applicable.
 	if(!texture_) {
 		return;
 	}
 
+	// Set the render target. *Must* be called after the above block in case the texture's
+	// been recreated or else the game will crash upon trying to write to a null texture.
 	render_target_setter target_setter(texture_);
+
+	// Clear the texture. SDL_RenderClear operates on the current rendering target, so the
+	// cached texture will be filled in even if it wasn't recreated. This prevents weird
+	// graphics bleed-through with certain driver configurations.
+	set_draw_color(renderer_, 0, 0, 0, 0);
+
+	SDL_RenderClear(renderer_); // TODO: move to its own wrapper.
 
 	// Draw items.
 	for(auto& shape : shapes_) {
@@ -1506,6 +1522,16 @@ void canvas::clear_shapes(const bool force)
 	});
 
 	shapes_.erase(iter, shapes_.end());
+}
+
+void canvas::update_size(unsigned int& value, unsigned int new_value)
+{
+	if(value != new_value) {
+		value = new_value;
+
+		size_changed_ = true;
+		set_is_dirty(true);
+	}
 }
 
 /***** ***** ***** ***** ***** SHAPE ***** ***** ***** ***** *****/
