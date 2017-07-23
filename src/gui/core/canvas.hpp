@@ -92,7 +92,7 @@ public:
 
 	canvas();
 	canvas(const canvas&) = default;
-	canvas(canvas&&) = default;
+	canvas(canvas&&);
 
 	~canvas();
 
