@@ -92,6 +92,7 @@ void minimap::set_map_data(const std::string& map_data)
 	try {
 		map_.reset(new gamemap(std::make_shared<terrain_type_data>(*terrain_), map_data_));
 	} catch(incorrect_map_format_error& e) {
+		map_.reset(nullptr);
 		ERR_CF << "Error while loading the map: " << e.message << '\n';
 	}
 
@@ -101,7 +102,9 @@ void minimap::set_map_data(const std::string& map_data)
 
 void minimap::canvas_draw_background(texture& tex)
 {
-	image::render_minimap(tex, *map_);
+	if(map_) {
+		image::render_minimap(tex, *map_);
+	}
 }
 
 const std::string& minimap::get_control_type() const
